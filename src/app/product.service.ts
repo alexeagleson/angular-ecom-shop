@@ -21,8 +21,8 @@ export class ProductService {
     return this.db.list('/products').snapshotChanges()
       .pipe(map(dbSnapshotArray => {
         return dbSnapshotArray.map(afAction => {
-          const $key = afAction.payload.key;
-          const data = { $key, ...afAction.payload.val() };
+          const key = afAction.payload.key;
+          const data = { key, ...afAction.payload.val() };
           return data;
         })
       }));

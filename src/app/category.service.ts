@@ -13,8 +13,8 @@ export class CategoryService {
     return this.db.list('/categories', fbRef => fbRef.orderByChild('name')).snapshotChanges()
       .pipe(map(dbSnapshotArray => {
         return dbSnapshotArray.map(afAction => {
-          const $key = afAction.payload.key;
-          const data = { $key, ...afAction.payload.val() };
+          const key = afAction.payload.key;
+          const data = { key, ...afAction.payload.val() };
           return data;
         })
       }));

@@ -31,7 +31,7 @@
             <td>{{ item.price | currency }}</td>
             <td>{{ item.category}}</td>
             <td>
-                <a [routerLink]="['/admin/products', item.$key]">Edit</a>
+                <a [routerLink]="['/admin/products', item.key]">Edit</a>
             </td>
         </tr>
     </tbody>
