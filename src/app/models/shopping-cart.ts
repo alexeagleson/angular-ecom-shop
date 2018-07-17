@@ -25,8 +25,13 @@ export class ShoppingCart {
     }
 
     get totalItemsCount() {
-        let initialValue = 0;
-        return this.items.reduce((accumulator, cartItem) => accumulator + cartItem.quantity, initialValue);
+        let count = 0;
+        for (let productId in this.itemsMap) {
+            count += this.itemsMap[productId].quantity;
+        }
+        return count;
+        // let initialValue = 0;
+        // return this.items.reduce((accumulator, cartItem) => accumulator + cartItem.quantity, initialValue);
     }
 
     get totalPrice() {
