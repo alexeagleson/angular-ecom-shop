@@ -22,7 +22,20 @@ export class ShoppingCartService {
   async getCart(): Promise<Observable<ShoppingCart>> {
     let cartId = await this.getOrCreateCartId();
     return this.db.object('/shopping-carts/' + cartId).valueChanges()
-      .pipe(map((fbCart: ShoppingCart) => new ShoppingCart(fbCart.items)));
+      .pipe(map((firebaseCart: ShoppingCart) => new ShoppingCart((firebaseCart && firebaseCart.items) || {})));
+  }
+
+  async addToCart(product: Product) {
+    this.updateItem(product, 1);
+  }
+
+  async removeFromCart(product: Product) {
+    this.updateItem(product, -1);
+  }
+
+  async clearCart() {
+    let cartId = await this.getOrCreateCartId();
+    this.db.object('/shopping-carts/' + cartId + '/items').remove();
   }
 
   private getItem(cartId: string, productId: string) {
@@ -38,20 +51,19 @@ export class ShoppingCartService {
     return result.key;
   }
 
-  private async updateItemQuantity(product: Product, change: number) {
+  private async updateItem(product: Product, change: number) {
     let cartId = await this.getOrCreateCartId();
     let item$ = this.getItem(cartId, product.key);
     
     item$.valueChanges().pipe(take(1)).subscribe((item: ShoppingCartItem) => {
-      item$.update({ product: product, quantity: ((item && item.quantity) || 0) + change });
+      let quantity = ((item && item.quantity) || 0) + change;
+      if (quantity <= 0) item$.remove();
+      else item$.update({ 
+        title: product.title,
+        imageUrl: product.imageUrl,
+        price: product.price,
+        quantity,
+      });
     });
-  }
-
-  async addToCart(product: Product) {
-    this.updateItemQuantity(product, 1);
-  }
-
-  async removeFromCart(product: Product) {
-    this.updateItemQuantity(product, -1);
   }
 }

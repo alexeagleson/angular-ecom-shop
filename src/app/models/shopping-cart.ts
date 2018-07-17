@@ -4,10 +4,14 @@ import { Product } from "./product";
 export class ShoppingCart {
     items: ShoppingCartItem[] = [];
 
-    constructor(public itemsMap: {}) {
+    constructor(private itemsMap: {}) {
+        this.itemsMap = itemsMap || {};
         for (let productId in this.itemsMap) {
             let item = itemsMap[productId];
-            this.items.push(new ShoppingCartItem(item.product, item.quantity));
+            if (item) this.items.push(new ShoppingCartItem({
+                ...item,
+                key: productId,
+            }));
         }
     }
 
